@@ -1,0 +1,7 @@
+[package]
+name = "fudi-rs"
+version = "0.1.0"
+authors = ["tpltnt"]
+edition = "2018"
+
+[dependencies]
