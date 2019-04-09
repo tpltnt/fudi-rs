@@ -1,0 +1,50 @@
+// finite state machine to parse FUDI messages
+// render: dot -Tpng -o parsing_fsm.png parsing_fsm.gv
+digraph fudi_fsm {
+    rankdir=LR;
+
+    node [shape=circle];
+    "init" [
+        label=""
+	shape="circle"
+	color=black
+	style=filled
+    ];
+    "done" [
+        label = "emit\nmessage\nbuffer &\nflush it"
+        shape = "doublecircle"
+    ];
+    "add_atom" [
+        label = "add atom\nto\nmessage\nbuffer"
+        shape = "doublecircle"
+    ];
+    "escape_space" [
+        label = "handle\nescaped\nspace"
+        shape = "circle"
+    ];
+    "clear_atom" [
+        label = "clear\natom\nbuffer"
+        shape = "circle"
+    ];
+
+    init -> start;
+
+    start -> done [label="semicolon"];
+    start -> start [label="whitespace"];
+    start -> atom [label="character"];
+
+    done -> start;
+
+    atom -> done [label="semicolon"];
+    atom -> escape_space [label="backslash"];
+    atom -> add_atom [label="whitespace"];
+    atom -> atom [label="character"];
+
+    add_atom -> start;
+
+    escape_space -> atom [label="space"];
+    escape_space -> done [label="semicolon"];
+    escape_space -> clear_atom [label=""];
+
+    clear_atom -> done;
+}
