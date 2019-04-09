@@ -4,3 +4,4 @@ An implementation of the Fast Universal Digital Interface networking protocol. T
 * [specification](https://web.archive.org/web/20120304071510/http://wiki.puredata.info/en/FUDI) (via archive.org)
 * [wikipedia: FUDI](https://en.wikipedia.org/wiki/FUDI)
 * [Pure Data](http://puredata.info/)
+* [graphviz](https://graphviz.org/) for drawing the parsing finite state machine
