@@ -79,13 +79,25 @@ mod test {
     }
 
     #[test]
-    fn send_into_ether() {
+    fn send_bang_into_ether() {
         let msg = PdMessage::Bang;
 	let target = "127.0.0.1:8989";
         let ns = NetSendUdp::new(&String::from(target));
 	let res = ns.send(msg);
 	match res {
 	    Ok(bsend) => assert_eq!(bsend, 6),
+	    Err(fail) => panic!(fail),
+	}
+    }
+
+    #[test]
+    fn send_float_into_ether() {
+        let msg = PdMessage::Float(432.0);
+	let target = "127.0.0.1:8989";
+        let ns = NetSendUdp::new(&String::from(target));
+	let res = ns.send(msg);
+	match res {
+	    Ok(bsend) => assert_eq!(bsend, 11),
 	    Err(fail) => panic!(fail),
 	}
     }
