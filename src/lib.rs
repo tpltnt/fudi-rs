@@ -19,7 +19,7 @@ impl PdMessage {
 	    PdMessage::Symbol(word) => payload = format!("symbol {}", word),
 	    PdMessage::Bang => payload = String::from("bang"),
 	}
-	payload = format!("{};", payload);
+	payload = format!("{};\n", payload);
 	return payload;
     }
 }
@@ -53,19 +53,19 @@ mod test {
     #[test]
     fn generate_float_message() {
         let msg = PdMessage::Float(2.974);
-	assert_eq!(String::from("float 2.974;"), msg.to_text());
+	assert_eq!(String::from("float 2.974;\n"), msg.to_text());
     }
 
     #[test]
     fn generate_symbol_message() {
         let msg = PdMessage::Symbol(String::from("foobar"));
-	assert_eq!(String::from("symbol foobar;"), msg.to_text());
+	assert_eq!(String::from("symbol foobar;\n"), msg.to_text());
     }
 
     #[test]
     fn generate_bang_message() {
         let msg = PdMessage::Bang;
-	assert_eq!(String::from("bang;"), msg.to_text());
+	assert_eq!(String::from("bang;\n"), msg.to_text());
     }
 
     #[test]
@@ -85,7 +85,7 @@ mod test {
         let ns = NetSendUdp::new(&String::from(target));
 	let res = ns.send(msg);
 	match res {
-	    Ok(bsend) => assert_eq!(bsend, 5),
+	    Ok(bsend) => assert_eq!(bsend, 6),
 	    Err(fail) => panic!(fail),
 	}
     }
