@@ -19,7 +19,7 @@ impl PdMessage {
 	    PdMessage::Symbol(word) => payload = format!("symbol {}", word),
 	    PdMessage::Bang => payload = String::from("bang"),
 	}
-	payload = format!("{};\n", payload);
+	payload = format!("{};\n", payload);  // newline not in spec, but in vanilla pd
 	return payload;
     }
 }
