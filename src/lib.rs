@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 /// An incomplete implementation of Pure Data message types.
 /// TODO: implement list, pointer and custom message types
-enum PdMessage {
+pub enum PdMessage {
     Float(f32),
     Symbol(String),
     Bang,
@@ -25,14 +25,14 @@ impl PdMessage {
 }
 
 // easier than an enum (for later matching)
-struct NetSendUdp {
+pub struct NetSendUdp {
     target: SocketAddr,
     socket: UdpSocket,
 }
 
 impl NetSendUdp {
     /// Create a new instance and set target address.
-    fn new(target: &str) -> crate::NetSendUdp {
+    pub fn new(target: &str) -> crate::NetSendUdp {
         NetSendUdp {
             target: SocketAddr::from_str(target).expect("failed to parse target address"),
             socket: UdpSocket::bind("0.0.0.0:0").expect("failed to bind host socket"),
@@ -40,7 +40,7 @@ impl NetSendUdp {
     }
 
     /// Send a message to the target.
-    fn send(&self, msg: PdMessage) -> Result<usize> {
+    pub fn send(&self, msg: PdMessage) -> Result<usize> {
         self.socket.send_to(msg.to_text().as_bytes(), self.target)
     }
 }
