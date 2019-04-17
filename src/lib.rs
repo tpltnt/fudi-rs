@@ -40,7 +40,7 @@ impl NetSendUdp {
     }
 
     /// Send a message to the target.
-    pub fn send(&self, msg: PdMessage) -> Result<usize> {
+    pub fn send(&self, msg: &PdMessage) -> Result<usize> {
         self.socket.send_to(msg.to_text().as_bytes(), self.target)
     }
 }
@@ -82,7 +82,7 @@ mod test {
         let msg = PdMessage::Bang;
         let target = "127.0.0.1:8989";
         let ns = NetSendUdp::new(&String::from(target));
-        let res = ns.send(msg);
+        let res = ns.send(&msg);
         match res {
             Ok(bsend) => assert_eq!(bsend, 6),
             Err(fail) => panic!(fail),
@@ -94,7 +94,7 @@ mod test {
         let msg = PdMessage::Float(432.0);
         let target = "127.0.0.1:8989";
         let ns = NetSendUdp::new(&String::from(target));
-        let res = ns.send(msg);
+        let res = ns.send(&msg);
         match res {
             Ok(bsend) => assert_eq!(bsend, 11),
             Err(fail) => panic!(fail),
