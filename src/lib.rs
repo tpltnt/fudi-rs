@@ -1,6 +1,15 @@
 //! This crate enables the communication between Rust programs
 //! and Pure Data over a network using the FUDI protocol.
 //!
+//! # Examples
+//! Create and send a bang to a Pure Data instance with a netreceive object listening
+//! on 127.0.0.1:5678 for UDP traffic.
+//! ```rust
+//! let netsend = fudi_rs::NetSendUdp::new("127.0.0.1:5678");
+//! let msg = fudi_rs::PdMessage::Bang;
+//! netsend.send(&msg).expect("sending message failed");
+//! ```
+//!
 //! # References
 //! * [Pure Data](http://puredata.info/)
 //! * [FUDI specification](https://web.archive.org/web/20120304071510/http://wiki.puredata.info/en/FUDI) (via archive.org)
@@ -23,6 +32,12 @@ use std::str::FromStr;
 /// * list
 /// * pointer
 /// * custom message
+///
+/// # Examples
+/// Create a message to send a (floating point) number.
+/// ```rust
+/// let msg = fudi_rs::PdMessage::Float(23.42);
+/// ```
 ///
 /// # references
 /// * [FLOSS Manuals: Pure Data - messages](http://write.flossmanuals.net/pure-data/messages/)
