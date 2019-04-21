@@ -3,7 +3,19 @@ use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
 use std::str::FromStr;
 
 /// An incomplete implementation of Pure Data message types.
-/// TODO: implement list, pointer and custom message types
+///
+/// # implemented
+/// * Float messages
+/// * Symbol messages (based on strings)
+/// * Bang messages
+///
+/// # not implemented
+/// * list
+/// * pointer
+/// * custom message
+///
+/// # references
+/// * [FLOSS Manuals: Pure Data - messages](http://write.flossmanuals.net/pure-data/messages/)
 pub enum PdMessage {
     Float(f32),
     Symbol(String),
