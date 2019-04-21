@@ -36,7 +36,11 @@ impl PdMessage {
     }
 }
 
-// easier than an enum (for later matching)
+/// Encapsulate sending Pure Date messages via FUDI over UDP.
+/// This is the library equivalent of the netsend-object for UDP.
+///
+/// # references
+/// * [FLOSS manuals: Pure Data - send and receive](http://write.flossmanuals.net/pure-data/send-and-receive/)
 pub struct NetSendUdp {
     target: SocketAddr,
     socket: UdpSocket,
@@ -44,6 +48,9 @@ pub struct NetSendUdp {
 
 impl NetSendUdp {
     /// Create a new instance and set target address.
+    ///
+    /// # Arguments
+    /// * `target` - target host (& port) to send messages to
     pub fn new(target: &str) -> crate::NetSendUdp {
         NetSendUdp {
             target: SocketAddr::from_str(target).expect("failed to parse target address"),
@@ -51,7 +58,10 @@ impl NetSendUdp {
         }
     }
 
-    /// Send a message to the target.
+    /// Send a message to the target and return the number of bytes sent.
+    ///
+    /// # Arguments
+    /// * `msg` - message to send to the target
     pub fn send(&self, msg: &PdMessage) -> Result<usize> {
         self.socket.send_to(msg.to_text().as_bytes(), self.target)
     }
