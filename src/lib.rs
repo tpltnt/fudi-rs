@@ -1,7 +1,7 @@
 //! This crate enables the communication between Rust programs
 //! and Pure Data over a network using the FUDI protocol.
-// !
-//! # references
+//!
+//! # References
 //! * [Pure Data](http://puredata.info/)
 //! * [FUDI specification](https://web.archive.org/web/20120304071510/http://wiki.puredata.info/en/FUDI) (via archive.org)
 //! * [wikipedia: FUDI](https://en.wikipedia.org/wiki/FUDI)
