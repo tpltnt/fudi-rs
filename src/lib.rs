@@ -1,3 +1,13 @@
+//! This crate enables the communication between Rust programs
+//! and Pure Data over a network using the FUDI protocol.
+// !
+//! # references
+//! * [Pure Data](http://puredata.info/)
+//! * [FUDI specification](https://web.archive.org/web/20120304071510/http://wiki.puredata.info/en/FUDI) (via archive.org)
+//! * [wikipedia: FUDI](https://en.wikipedia.org/wiki/FUDI)
+//! * [FLOSS Manuals: Pure Data - messages](http://write.flossmanuals.net/pure-data/messages/)
+//! * [FLOSS manuals: Pure Data - send and receive](http://write.flossmanuals.net/pure-data/send-and-receive/)
+
 use std::io::Result;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
 use std::str::FromStr;
