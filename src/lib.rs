@@ -33,7 +33,9 @@ pub enum PdMessage {
 }
 
 impl PdMessage {
-    /// Generate a message string for the (given) message type
+    /// Generate a message string for the (given) message type.
+    /// # note
+    /// A message needs a trailing newline (i.e. '\n') according to the Java example in the [old wiki page](https://web.archive.org/web/20120304071510/http://wiki.puredata.info/en/FUDI). This is not explicitly mentioned in the FUDI specification.
     fn to_text(&self) -> String {
         let mut payload: String;
         match &self {
