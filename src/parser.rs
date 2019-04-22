@@ -89,9 +89,15 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
                 }));
             }
         }
-        for (i, tmp) in tokens.iter().enumerate() {
+        let mut atoms: Vec<String> = vec![];
+        for tmp in tokens.iter() {
             let (atom, _) = tmp; // discard whitespace
+            atoms.push(String::from_utf8(atom.to_vec()).unwrap());
         }
+        return Ok(PdMessage::Generic(GenericMessage {
+            selector: atoms[0].clone(),
+            atoms: atoms[1..].to_vec(),
+        }));
     }
 
     return Err("could not parse payload");
@@ -149,9 +155,12 @@ mod test_parser {
             Err(msg) => panic!(msg),
         }
 
-        let res = get_message(b"only alpha;\n");
+        let res = get_message(b"only alpha msg;\n");
         match res {
-            Ok(message) => assert_eq!("only alpha;\n", message.to_text()),
+            Ok(message) => match message {
+                PdMessage::Generic(_) => assert_eq!("only alpha msg;\n", message.to_text()),
+                _ => panic!("unexpected message type"),
+            },
             Err(msg) => panic!(msg),
         }
     }
