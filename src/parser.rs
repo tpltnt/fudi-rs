@@ -1,6 +1,6 @@
 //! Parse Pure Data Messages using nom.
 
-use crate::PdMessage;
+use crate::{GenericMessage, PdMessage};
 use nom::{is_alphanumeric, IResult};
 
 extern crate rand;
@@ -83,7 +83,10 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
             if atom == "bang".as_bytes() {
                 return Ok(PdMessage::Bang);
             } else {
-                panic!("generic selector-only message not implemented");
+                return Ok(PdMessage::Generic(GenericMessage {
+                    selector: String::from_utf8(atom.to_vec()).unwrap(),
+                    atoms: vec![],
+                }));
             }
         }
         for (i, tmp) in tokens.iter().enumerate() {
@@ -133,16 +136,22 @@ mod test_parser {
     fn message_from_bang_only_payload() {
         let res = get_message(b"bang;\n");
         match res {
-            Ok(message) => println!("{:?}", message),
+            Ok(message) => assert_eq!("bang;\n", message.to_text()),
             Err(msg) => panic!(msg),
         }
     }
 
     #[test]
     fn message_from_only_alpha_payload() {
+        let res = get_message(b"selector;\n");
+        match res {
+            Ok(message) => assert_eq!("selector;\n", message.to_text()),
+            Err(msg) => panic!(msg),
+        }
+
         let res = get_message(b"only alpha;\n");
         match res {
-            Ok(message) => println!("{:?}", message),
+            Ok(message) => assert_eq!("only alpha;\n", message.to_text()),
             Err(msg) => panic!(msg),
         }
     }
