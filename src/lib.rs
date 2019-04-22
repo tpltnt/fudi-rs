@@ -155,3 +155,63 @@ mod test_netsendudp {
         }
     }
 }
+
+/// Encapsulate receiving Pure Date messages via FUDI over UDP.
+/// This is the library equivalent of the netreceive-object for UDP.
+///
+/// # references
+/// * [FLOSS manuals: Pure Data - send and receive](http://write.flossmanuals.net/pure-data/send-and-receive/)
+pub struct NetReceiveUdp {
+    socket: UdpSocket,
+}
+
+impl NetReceiveUdp {
+    /// Create a new instance and set address to listen on.
+    ///
+    /// # Arguments
+    /// * `addr` - host (& port) to listen for messages
+    pub fn new(addr: &str) -> crate::NetReceiveUdp {
+        let laddr = SocketAddr::from_str(addr).expect("failed to parse target address");
+        NetReceiveUdp {
+            socket: UdpSocket::bind(laddr).expect("failed to bind socket to host"),
+        }
+    }
+
+    /// Receive binary data via UDP.
+    ///
+    /// *note*: This function panics upon errors.
+    pub fn receive_binary(&self) -> Vec<u8> {
+        // max 65,507 bytes (65,535 − 8 byte UDP header − 20 byte IP header)
+        let mut buffer: [u8; 1] = [0; 1];
+        let recv_result = self.socket.recv_from(&mut buffer);
+        let mut data;
+        match recv_result {
+            Ok((amount, _)) => data = Vec::from(&buffer[..amount]),
+            Err(e) => panic!("receiving data failed: {:?}", e),
+        }
+        data
+    }
+}
+
+#[cfg(test)]
+mod test_netreceiveudp {
+    use super::*;
+
+    #[test]
+    fn create_udp_netreceiveudp_test_target() {
+        // create netreceive
+        let target = "127.0.0.1:8989";
+        let nr = NetReceiveUdp::new(&String::from(target));
+
+        // extract socket from netreceive
+        let nr_socket = nr
+            .socket
+            .local_addr()
+            .expect("could not retrieve socket address");
+
+        // test properties
+        assert_eq!(nr_socket.is_ipv4(), true);
+        assert_eq!(nr_socket.ip(), IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)));
+        assert_eq!(nr_socket.port(), 8989);
+    }
+}
