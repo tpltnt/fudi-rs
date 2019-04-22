@@ -53,6 +53,7 @@ pub struct GenericMessage {
 ///
 /// # references
 /// * [FLOSS Manuals: Pure Data - messages](http://write.flossmanuals.net/pure-data/messages/)
+/// * [puredata.info: PdMessages](https://puredata.info/dev/PdMessages)
 #[derive(Debug)]
 pub enum PdMessage {
     Float(f32),
