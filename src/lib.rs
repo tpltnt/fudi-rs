@@ -21,6 +21,11 @@ use std::io::Result;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
 use std::str::FromStr;
 
+#[macro_use]
+extern crate nom;
+
+mod parser;
+
 /// An incomplete implementation of Pure Data message types.
 ///
 /// # implemented
