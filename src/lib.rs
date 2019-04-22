@@ -46,6 +46,7 @@ mod parser;
 ///
 /// # references
 /// * [FLOSS Manuals: Pure Data - messages](http://write.flossmanuals.net/pure-data/messages/)
+#[derive(Debug)]
 pub enum PdMessage {
     Float(f32),
     Symbol(String),
