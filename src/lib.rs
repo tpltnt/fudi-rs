@@ -26,6 +26,13 @@ extern crate nom;
 
 mod parser;
 
+/// An implementation of the most generic Pure Data message type.
+#[derive(Debug)]
+pub struct GenericMessage {
+    selector: String,
+    atoms: Vec<String>,
+}
+
 /// An incomplete implementation of Pure Data message types.
 ///
 /// # implemented
@@ -51,6 +58,7 @@ pub enum PdMessage {
     Float(f32),
     Symbol(String),
     Bang,
+    Generic(GenericMessage),
 }
 
 impl PdMessage {
@@ -63,6 +71,12 @@ impl PdMessage {
             PdMessage::Float(f) => payload = format!("float {}", f),
             PdMessage::Symbol(word) => payload = format!("symbol {}", word),
             PdMessage::Bang => payload = String::from("bang"),
+            PdMessage::Generic(msg) => {
+                payload = msg.selector.clone();
+                for atom in msg.atoms.iter() {
+                    payload = payload + " " + atom;
+                }
+            }
         }
         payload = format!("{};\n", payload); // newline not in spec, but in vanilla pd
         return payload;
@@ -90,6 +104,16 @@ mod test_pdmessage {
         let msg = PdMessage::Bang;
         assert_eq!(String::from("bang;\n"), msg.to_text());
     }
+
+    #[test]
+    fn generate_generic_message() {
+        let msg = PdMessage::Generic(GenericMessage {
+            selector: String::from("selector"),
+            atoms: vec!["one".to_string(), "two".to_string(), "17.9".to_string()],
+        });
+        assert_eq!(String::from("selector one two 17.9;\n"), msg.to_text());
+    }
+
 }
 
 /// Encapsulate sending Pure Date messages via FUDI over UDP.
