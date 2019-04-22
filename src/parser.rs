@@ -1,5 +1,6 @@
 //! Parse Pure Data Messages using nom.
 
+use crate::PdMessage;
 use nom::{is_alphanumeric, IResult};
 
 extern crate rand;
@@ -66,6 +67,33 @@ named!(parse_atom<&[u8], &[u8]>,
     take_while!(is_alphanumeric)
 );
 
+/// Retrieve Pure Data message from byte payload.
+/// *note*: This implementation is incomplete.
+fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
+    let res = parse_message(payload);
+    if let Ok(parsing_result) = res {
+        let (remainder, chunks) = parsing_result;
+        let (tokens, semicolon) = chunks;
+        if (semicolon != ';') {
+            return Err("terminating semicolon is missing");
+        }
+        // check for potential bang message
+        if 1 == tokens.len() {
+            let (atom, _) = tokens[0];
+            if atom == "bang".as_bytes() {
+                return Ok(PdMessage::Bang);
+            } else {
+                panic!("generic selector-only message not implemented");
+            }
+        }
+        for (i, tmp) in tokens.iter().enumerate() {
+            let (atom, _) = tmp; // discard whitespace
+        }
+    }
+
+    return Err("could not parse payload");
+}
+
 #[cfg(test)]
 mod test_parser {
     use super::*;
@@ -102,19 +130,20 @@ mod test_parser {
         }
     */
     #[test]
-    fn parsing_messages() {
-        // positive test
-        let res = parse_message(b"only alpha;\n");
-        // Ok(([10], ([([111, 110, 108, 121], [32]), ([97, 108, 112, 104, 97], [])], ';')))
-        if let Ok(parsing_result) = res {
-            let (remainder, chunks) = parsing_result;
-            let (tokens, semicolon) = chunks;
-            for (i, tmp) in tokens.iter().enumerate() {
-                let (atom, _) = tmp; // discard whitespace
-            }
-            assert_eq!(semicolon, ';');
-        } else {
-            assert!(false);
+    fn message_from_bang_only_payload() {
+        let res = get_message(b"bang;\n");
+        match res {
+            Ok(message) => println!("{:?}", message),
+            Err(msg) => panic!(msg),
+        }
+    }
+
+    #[test]
+    fn message_from_only_alpha_payload() {
+        let res = get_message(b"only alpha;\n");
+        match res {
+            Ok(message) => println!("{:?}", message),
+            Err(msg) => panic!(msg),
         }
     }
 }
