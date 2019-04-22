@@ -63,6 +63,29 @@ impl PdMessage {
     }
 }
 
+#[cfg(test)]
+mod test_pdmessage {
+    use super::*;
+
+    #[test]
+    fn generate_float_message() {
+        let msg = PdMessage::Float(2.974);
+        assert_eq!(String::from("float 2.974;\n"), msg.to_text());
+    }
+
+    #[test]
+    fn generate_symbol_message() {
+        let msg = PdMessage::Symbol(String::from("foobar"));
+        assert_eq!(String::from("symbol foobar;\n"), msg.to_text());
+    }
+
+    #[test]
+    fn generate_bang_message() {
+        let msg = PdMessage::Bang;
+        assert_eq!(String::from("bang;\n"), msg.to_text());
+    }
+}
+
 /// Encapsulate sending Pure Date messages via FUDI over UDP.
 /// This is the library equivalent of the netsend-object for UDP.
 ///
@@ -95,26 +118,8 @@ impl NetSendUdp {
 }
 
 #[cfg(test)]
-mod test {
+mod test_netsendudp {
     use super::*;
-
-    #[test]
-    fn generate_float_message() {
-        let msg = PdMessage::Float(2.974);
-        assert_eq!(String::from("float 2.974;\n"), msg.to_text());
-    }
-
-    #[test]
-    fn generate_symbol_message() {
-        let msg = PdMessage::Symbol(String::from("foobar"));
-        assert_eq!(String::from("symbol foobar;\n"), msg.to_text());
-    }
-
-    #[test]
-    fn generate_bang_message() {
-        let msg = PdMessage::Bang;
-        assert_eq!(String::from("bang;\n"), msg.to_text());
-    }
 
     #[test]
     fn create_udp_netsend_test_target() {
