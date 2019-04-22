@@ -18,6 +18,11 @@ fn is_not_whitespace(c: u8) -> bool {
     !is_whitespace(c)
 }
 
+/// Test for valid character in atom (i.e. not whitespace or semicolon).
+fn valid_atom_character(c: u8) -> bool {
+    is_not_whitespace(c) || c != 59
+}
+
 #[cfg(test)]
 mod test_supplements {
     use super::*;
@@ -51,6 +56,11 @@ mod test_supplements {
         // check test function
         assert_eq!(is_whitespace(t), false);
     }
+
+    #[test]
+    fn valid_atom_chars() {
+        assert!(valid_atom_character(b';'));
+    }
 }
 
 named!(parse_message<&[u8], (std::vec::Vec<(&[u8], &[u8])>, char)>,
@@ -77,23 +87,63 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
         if (semicolon != ';') {
             return Err("terminating semicolon is missing");
         }
-        // check for potential bang message
+
+        // check for potential bang or float message
         if 1 == tokens.len() {
             let (atom, _) = tokens[0];
+
+            // yield bang if applicable
             if atom == "bang".as_bytes() {
                 return Ok(PdMessage::Bang);
-            } else {
-                return Ok(PdMessage::Generic(GenericMessage {
-                    selector: String::from_utf8(atom.to_vec()).unwrap(),
-                    atoms: vec![],
-                }));
             }
+
+            // yield float if applicable
+            if 45 == atom[0] {
+                // negative sign/prefix
+                let word = String::from_utf8(atom[1..].to_vec()).unwrap();
+                let as_int = word.parse::<u32>();
+                if !as_int.is_err() {
+                    let val = as_int.unwrap() as f32;
+                    return Ok(PdMessage::Float(val * -1.0));
+                }
+
+                let as_float = word.parse::<f32>();
+                if !as_float.is_err() {
+                    let val = as_float.unwrap();
+                    return Ok(PdMessage::Float(val * -1.0));
+                }
+            }
+            let word = String::from_utf8(atom.to_vec()).unwrap();
+            let as_int = word.parse::<u32>();
+            if !as_int.is_err() {
+                let val = as_int.unwrap();
+                return Ok(PdMessage::Float(val as f32));
+            }
+
+            let as_float = word.parse::<f32>();
+            if !as_float.is_err() {
+                let val = as_float.unwrap();
+                return Ok(PdMessage::Float(val));
+            }
+
+            // generic message with only selector
+            return Ok(PdMessage::Generic(GenericMessage {
+                selector: word,
+                atoms: vec![],
+            }));
         }
+
+        // message with multiple atoms
         let mut atoms: Vec<String> = vec![];
         for tmp in tokens.iter() {
             let (atom, _) = tmp; // discard whitespace
             atoms.push(String::from_utf8(atom.to_vec()).unwrap());
         }
+
+        // check for symbol and float messages
+        if 2 == tokens.len() {}
+
+        // valid message, but no pre-defined type
         return Ok(PdMessage::Generic(GenericMessage {
             selector: atoms[0].clone(),
             atoms: atoms[1..].to_vec(),
@@ -164,4 +214,45 @@ mod test_parser {
             Err(msg) => panic!(msg),
         }
     }
+
+    #[test]
+    fn message_from_float_payload() {
+        // float messages can be implied
+        let res = get_message(b"39;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Float(_) => assert_eq!("float 39;\n", message.to_text()),
+                _ => panic!("float message expected, different type detected"),
+            },
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"-3;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Float(_) => assert_eq!("float -3;\n", message.to_text()),
+                _ => panic!("float message expected, different type detected"),
+            },
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"float 3;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Float(_) => assert_eq!("float 3;\n", message.to_text()),
+                _ => panic!("unexpected message type"),
+            },
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"float -5.7;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Float(_) => assert_eq!("float -5.7;\n", message.to_text()),
+                _ => panic!("unexpected message type"),
+            },
+            Err(msg) => panic!(msg),
+        }
+    }
+
 }
