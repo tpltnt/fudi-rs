@@ -1,7 +1,7 @@
 //! Parse Pure Data Messages using nom.
 
 use crate::{GenericMessage, PdMessage};
-use nom::{is_alphanumeric, IResult};
+use nom::{alphanumeric, digit, float, is_alphanumeric, is_digit, IResult};
 
 extern crate rand;
 use rand::Rng;
@@ -75,6 +75,27 @@ named!(parse_message<&[u8], (std::vec::Vec<(&[u8], &[u8])>, char)>,
 
 named!(parse_atom<&[u8], &[u8]>,
     take_while!(is_alphanumeric)
+);
+
+named!(new_parse_message<&[u8], (std::vec::Vec<(((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>), &[u8])>, char)>,
+    many_till!(
+        pair!(
+	    new_parse_atom,
+            take_till!(is_not_whitespace)
+        ),
+        char!(';')
+    )
+);
+
+// An atom is either an integer, a float, or a string
+named!(new_parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>)>,
+    pair!(
+        pair!(
+            opt!(float),
+            opt!(digit)
+	),
+        opt!(alphanumeric)
+    )
 );
 
 /// Retrieve Pure Data message from byte payload.
