@@ -178,6 +178,12 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
 
                 // handle symbol message
                 if atom == "symbol".as_bytes() {
+                    let (msg_parts, _) = tokens[1];
+                    let (_, word) = msg_parts;
+                    if let Some(atom) = word {
+                        return Ok(PdMessage::Symbol(String::from_utf8(atom.to_vec()).unwrap()));
+                    }
+
                     panic!("parsing symbol message not yet implemented");
                 }
             }
@@ -306,6 +312,29 @@ mod test_parser {
             Ok(message) => match message {
                 PdMessage::Float(_) => assert_eq!("float -5.7;\n", message.to_text()),
                 _ => panic!("unexpected message type"),
+            },
+            Err(msg) => panic!(msg),
+        }
+    }
+
+    #[test]
+    fn message_from_symbol_payload() {
+        let res = get_message(b"symbol foo;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Symbol(_) => assert_eq!("symbol foo;\n", message.to_text()),
+                _ => panic!("symbol message expected, different type detected"),
+            },
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"la la;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Symbol(_) => {
+                    panic!("non-symbol message expected, symbol message detected")
+                }
+                _ => (),
             },
             Err(msg) => panic!(msg),
         }
