@@ -1,7 +1,7 @@
 //! Parse Pure Data Messages using nom.
 
 use crate::{GenericMessage, PdMessage};
-use nom::{alphanumeric, digit, float, is_alphanumeric, is_digit, IResult};
+use nom::{alphanumeric, digit, float};
 
 extern crate rand;
 use rand::Rng;
@@ -91,7 +91,7 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
     if let Ok(parsing_result) = res {
         let (remainder, chunks) = parsing_result;
         let (tokens, semicolon) = chunks;
-        if (semicolon != ';') {
+        if semicolon != ';' {
             return Err("terminating semicolon is missing");
         }
 
@@ -142,14 +142,14 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
         if 2 == tokens.len() {
             // extract relevant data (types)
             let (msg_parts, _) = tokens[0]; // separate potental selector from whitespace
-            let (number, word) = msg_parts; // split into potential numbers and strings
+            let (_, word) = msg_parts; // split into potential numbers and strings
 
             // text -> selector
             if let Some(atom) = word {
                 // handle float message
                 if atom == "float".as_bytes() {
                     let (msg_parts, _) = tokens[1];
-                    let (number, word) = msg_parts;
+                    let (number, _) = msg_parts;
                     // number -> float message
                     let (f, digits) = number; // separate float from integer
                     if let Some(atom) = f {
@@ -187,7 +187,7 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
         let mut atoms: Vec<String> = vec![];
         for tmp in tokens.iter() {
             let (msg_parts, _) = tmp; // discard whitespace
-            let (number, word) = msg_parts;
+            let (_, word) = msg_parts;
             // handle only text atoms
             if let Some(atom) = word {
                 atoms.push(String::from_utf8(atom.to_vec()).unwrap());
@@ -217,7 +217,7 @@ mod test_parser {
             let expected: [u8; 2] = [59, 10];
             assert_eq!(remainder, expected);
             // unpack all options
-            let (numbers, text) = tokens;
+            let (_, text) = tokens;
             if let Some(sym) = text {
                 let expected = [98, 97, 110, 103];
                 assert_eq!(sym, expected);
