@@ -63,7 +63,7 @@ mod test_supplements {
     }
 }
 
-named!(parse_message<&[u8], (std::vec::Vec<(&[u8], &[u8])>, char)>,
+named!(parse_message<&[u8], (std::vec::Vec<(((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>), &[u8])>, char)>,
     many_till!(
         pair!(
 	    parse_atom,
@@ -73,22 +73,8 @@ named!(parse_message<&[u8], (std::vec::Vec<(&[u8], &[u8])>, char)>,
     )
 );
 
-named!(parse_atom<&[u8], &[u8]>,
-    take_while!(is_alphanumeric)
-);
-
-named!(new_parse_message<&[u8], (std::vec::Vec<(((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>), &[u8])>, char)>,
-    many_till!(
-        pair!(
-	    new_parse_atom,
-            take_till!(is_not_whitespace)
-        ),
-        char!(';')
-    )
-);
-
 // An atom is either an integer, a float, or a string
-named!(new_parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>)>,
+named!(parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>)>,
     pair!(
         pair!(
             opt!(float),
@@ -111,58 +97,102 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
 
         // check for potential bang or float message
         if 1 == tokens.len() {
-            let (atom, _) = tokens[0];
+            // extract relevant data (types)
+            let (msg_parts, _) = tokens[0]; // separate potental atoms from whitespace
+            let (number, word) = msg_parts; // split into potential numbers and strings
 
-            // yield bang if applicable
-            if atom == "bang".as_bytes() {
-                return Ok(PdMessage::Bang);
+            // text -> potential bang message
+            if let Some(atom) = word {
+                if atom == "bang".as_bytes() {
+                    return Ok(PdMessage::Bang);
+                }
+                // generic message with only selector
+                return Ok(PdMessage::Generic(GenericMessage {
+                    selector: String::from_utf8(atom.to_vec()).unwrap(),
+                    atoms: vec![],
+                }));
             }
+            // number -> float message
+            let (f, digits) = number; // separate float from integer
+            if let Some(atom) = f {
+                return Ok(PdMessage::Float(atom));
+            }
+            if let Some(atom) = digits {
+                // digits need to be converted to integer
+                if 45 == atom[0] {
+                    // negative sign/prefix
+                    let word = String::from_utf8(atom[1..].to_vec()).unwrap();
+                    let as_int = word.parse::<u32>();
+                    if !as_int.is_err() {
+                        let val = as_int.unwrap() as f32;
+                        return Ok(PdMessage::Float(val * -1.0));
+                    }
+                } else {
+                    let word = String::from_utf8(atom.to_vec()).unwrap();
+                    let as_int = word.parse::<u32>();
+                    if !as_int.is_err() {
+                        let val = as_int.unwrap() as f32;
+                        return Ok(PdMessage::Float(val * -1.0));
+                    }
+                }
+            }
+        }
 
-            // yield float if applicable
-            if 45 == atom[0] {
-                // negative sign/prefix
-                let word = String::from_utf8(atom[1..].to_vec()).unwrap();
-                let as_int = word.parse::<u32>();
-                if !as_int.is_err() {
-                    let val = as_int.unwrap() as f32;
-                    return Ok(PdMessage::Float(val * -1.0));
+        // check for symbol and float messages
+        if 2 == tokens.len() {
+            // extract relevant data (types)
+            let (msg_parts, _) = tokens[0]; // separate potental selector from whitespace
+            let (number, word) = msg_parts; // split into potential numbers and strings
+
+            // text -> selector
+            if let Some(atom) = word {
+                // handle float message
+                if atom == "float".as_bytes() {
+                    let (msg_parts, _) = tokens[1];
+                    let (number, word) = msg_parts;
+                    // number -> float message
+                    let (f, digits) = number; // separate float from integer
+                    if let Some(atom) = f {
+                        return Ok(PdMessage::Float(atom));
+                    }
+                    if let Some(atom) = digits {
+                        // digits need to be converted to integer
+                        if 45 == atom[0] {
+                            // negative sign/prefix
+                            let word = String::from_utf8(atom[1..].to_vec()).unwrap();
+                            let as_int = word.parse::<u32>();
+                            if !as_int.is_err() {
+                                let val = as_int.unwrap() as f32;
+                                return Ok(PdMessage::Float(val * -1.0));
+                            }
+                        } else {
+                            let word = String::from_utf8(atom.to_vec()).unwrap();
+                            let as_int = word.parse::<u32>();
+                            if !as_int.is_err() {
+                                let val = as_int.unwrap() as f32;
+                                return Ok(PdMessage::Float(val * -1.0));
+                            }
+                        }
+                    }
                 }
 
-                let as_float = word.parse::<f32>();
-                if !as_float.is_err() {
-                    let val = as_float.unwrap();
-                    return Ok(PdMessage::Float(val * -1.0));
+                // handle symbol message
+                if atom == "symbol".as_bytes() {
+                    panic!("parsing symbol message not yet implemented");
                 }
             }
-            let word = String::from_utf8(atom.to_vec()).unwrap();
-            let as_int = word.parse::<u32>();
-            if !as_int.is_err() {
-                let val = as_int.unwrap();
-                return Ok(PdMessage::Float(val as f32));
-            }
-
-            let as_float = word.parse::<f32>();
-            if !as_float.is_err() {
-                let val = as_float.unwrap();
-                return Ok(PdMessage::Float(val));
-            }
-
-            // generic message with only selector
-            return Ok(PdMessage::Generic(GenericMessage {
-                selector: word,
-                atoms: vec![],
-            }));
         }
 
         // message with multiple atoms
         let mut atoms: Vec<String> = vec![];
         for tmp in tokens.iter() {
-            let (atom, _) = tmp; // discard whitespace
-            atoms.push(String::from_utf8(atom.to_vec()).unwrap());
+            let (msg_parts, _) = tmp; // discard whitespace
+            let (number, word) = msg_parts;
+            // handle only text atoms
+            if let Some(atom) = word {
+                atoms.push(String::from_utf8(atom.to_vec()).unwrap());
+            }
         }
-
-        // check for symbol and float messages
-        if 2 == tokens.len() {}
 
         // valid message, but no pre-defined type
         return Ok(PdMessage::Generic(GenericMessage {
@@ -170,7 +200,6 @@ fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
             atoms: atoms[1..].to_vec(),
         }));
     }
-
     return Err("could not parse payload");
 }
 
@@ -184,11 +213,17 @@ mod test_parser {
         // positive test
         let res = parse_atom(b"bang;\n");
         if let Ok(parsing_result) = res {
-            let (remainder, token) = parsing_result;
+            let (remainder, tokens) = parsing_result;
             let expected: [u8; 2] = [59, 10];
             assert_eq!(remainder, expected);
-            let expected = [98, 97, 110, 103];
-            assert_eq!(token, expected)
+            // unpack all options
+            let (numbers, text) = tokens;
+            if let Some(sym) = text {
+                let expected = [98, 97, 110, 103];
+                assert_eq!(sym, expected);
+            } else {
+                assert!(false);
+            }
         } else {
             assert!(false);
         }
