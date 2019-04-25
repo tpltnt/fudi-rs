@@ -8,5 +8,6 @@ A message needs a trailing newline (i.e. '\n') according to the Java example in 
 * [wikipedia: FUDI](https://en.wikipedia.org/wiki/FUDI)
 * [Pure Data](http://puredata.info/)
 * [Pure Data messages](https://puredata.info/dev/PdMessages)
+* [nom](https://github.com/Geal/nom) - parser combinator framework
 * [ASCII](https://en.wikipedia.org/wiki/ASCII)
 * [graphviz](https://graphviz.org/) for drawing the parsing finite state machine
