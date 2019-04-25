@@ -1,0 +1,16 @@
+#N canvas 561 264 665 391 10;
+#X obj 99 148 loadbang;
+#X msg 99 176 listen 39942;
+#X obj 99 211 netreceive -u;
+#X floatatom 99 252 5 0 0 0 received - -, f 5;
+#X text 200 176 bind UDP listener to port 39942;
+#X text 159 251 display float received;
+#X msg 319 97 \; pd dsp \$1;
+#X obj 319 62 tgl 25 0 empty empty compute 27 12 0 10 -262144 -1 -1
+1 1;
+#X text 35 21 A demo patch for receiving float messages from a Rust
+application;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 7 0 6 0;
