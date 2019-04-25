@@ -4,6 +4,8 @@ An implementation of the Fast Universal Digital Interface networking protocol. T
 The specification implies ASCII encoding for the messages.
 A message needs a trailing newline (i.e. '\n') according to the Java example in the [old wiki page](https://web.archive.org/web/20120304071510/http://wiki.puredata.info/en/FUDI). This is not explicitly mentioned in the FUDI specification.
 
+[![Build Status](https://travis-ci.org/tpltnt/fudi-rs.svg?branch=master)](https://travis-ci.org/tpltnt/fudi-rs)
+
 # TODO
 * handling escaped whitespace in atoms
 * examples (also pure data patches)
