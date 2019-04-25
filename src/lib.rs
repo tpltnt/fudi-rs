@@ -215,7 +215,7 @@ impl NetReceiveUdp {
     /// *note*: This function panics upon errors.
     pub fn receive_binary(&self) -> Vec<u8> {
         // max 65,507 bytes (65,535 − 8 byte UDP header − 20 byte IP header)
-        let mut buffer: [u8; 1] = [0; 1];
+        let mut buffer = [0; 65535 - 8 - 20];
         let recv_result = self.socket.recv_from(&mut buffer);
         let mut data;
         match recv_result {
