@@ -16,6 +16,7 @@
 //! * [wikipedia: FUDI](https://en.wikipedia.org/wiki/FUDI)
 //! * [FLOSS Manuals: Pure Data - messages](http://write.flossmanuals.net/pure-data/messages/)
 //! * [FLOSS manuals: Pure Data - send and receive](http://write.flossmanuals.net/pure-data/send-and-receive/)
+//! * [Pure Data message implementation notes](https://puredata.info/dev/PdMessages)
 
 use std::io::{Error, ErrorKind, Result};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
