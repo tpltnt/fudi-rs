@@ -235,6 +235,35 @@ mod test_parser {
         }
     }
 
+    #[test]
+    fn bang_capture() {
+        // capured payload: 0x62 0x61 0x6e 0x67 0x3b 0x0a
+        let res = parse_atom(b"bang;\n");
+        if let Ok(parsing_result) = res {
+            let (remainder, tokens) = parsing_result;
+            let expected: [u8; 2] = [0x3b, 0x0a];
+            assert_eq!(remainder, expected);
+            // unpack all options
+            let (_, text) = tokens;
+            if let Some(sym) = text {
+                let expected = [0x62, 0x61, 0x6e, 0x67];
+                assert_eq!(sym, expected);
+            } else {
+                assert!(false);
+            }
+        } else {
+            assert!(false);
+        }
+
+        // process raw payload
+        let binary_payload: [u8; 6] = [0x62, 0x61, 0x6e, 0x67, 0x3b, 0x0a];
+        let res = get_message(&binary_payload);
+        match res {
+            Ok(message) => assert_eq!("bang;\n", message.to_text()),
+            Err(_) => panic!("could not parse captured payload"),
+        }
+    }
+
     /*
         fn parsing_specification_example_messages() {
             // positive test
