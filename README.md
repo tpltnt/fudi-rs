@@ -10,6 +10,9 @@ A message needs a trailing newline (i.e. '\n') according to the Java example in 
 * send random floats
 ** run patch "send_random_floats.pd"
 ** run: `cargo run --examples send_random_floats`
+* receive random floats
+** run patch "receive_random_floats.pd"
+** run: `cargo run --examples receive_random_floats`
 
 
 # TODO
