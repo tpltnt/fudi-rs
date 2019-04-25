@@ -73,7 +73,7 @@ named!(parse_message<&[u8], (std::vec::Vec<(((std::option::Option<f32>, std::opt
     )
 );
 
-// An atom is either an integer, a float, or a string
+// An atom is either an integer, a float, or a string (word)
 named!(parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>)>,
     pair!(
         pair!(
@@ -85,7 +85,7 @@ named!(parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>)
 );
 
 /// Retrieve Pure Data message from byte payload.
-/// *note*: This implementation is incomplete.
+/// *note*: This implementation is incomplete and does not handle escaped whitespace inside atoms.
 pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
     let res = parse_message(payload);
     if let Ok(parsing_result) = res {
