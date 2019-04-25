@@ -289,10 +289,10 @@ mod test_parser {
             Err(msg) => panic!(msg),
         }
 
-        let res = get_message(b"-3;\n");
+        let res = get_message(b"-27.2727;\n");
         match res {
             Ok(message) => match message {
-                PdMessage::Float(_) => assert_eq!("float -3;\n", message.to_text()),
+                PdMessage::Float(_) => assert_eq!("float -27.2727;\n", message.to_text()),
                 _ => panic!("float message expected, different type detected"),
             },
             Err(msg) => panic!(msg),
