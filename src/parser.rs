@@ -86,7 +86,7 @@ named!(parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>)
 
 /// Retrieve Pure Data message from byte payload.
 /// *note*: This implementation is incomplete.
-fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
+pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
     let res = parse_message(payload);
     if let Ok(parsing_result) = res {
         let (remainder, chunks) = parsing_result;

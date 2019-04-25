@@ -17,7 +17,7 @@
 //! * [FLOSS Manuals: Pure Data - messages](http://write.flossmanuals.net/pure-data/messages/)
 //! * [FLOSS manuals: Pure Data - send and receive](http://write.flossmanuals.net/pure-data/send-and-receive/)
 
-use std::io::Result;
+use std::io::{Error, ErrorKind, Result};
 use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
 use std::str::FromStr;
 
@@ -221,6 +221,19 @@ impl NetReceiveUdp {
             Err(e) => panic!("receiving data failed: {:?}", e),
         }
         data
+    }
+
+    /// Receive Pure Data messages via UDP.
+    pub fn receive(&self) -> Result<PdMessage> {
+        let payload = self.receive_binary();
+        let res = parser::get_message(payload.as_slice());
+        match res {
+            Ok(msg) => Ok(msg),
+            Err(msg) => {
+                let err = Error::new(ErrorKind::InvalidData, msg);
+                Err(err)
+            }
+        }
     }
 }
 
