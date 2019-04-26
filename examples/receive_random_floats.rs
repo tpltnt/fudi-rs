@@ -12,8 +12,12 @@ fn main() {
     loop {
         let msg = netreceive.receive();
         match msg {
-	    Ok(f) => println!("received {:?}", f),
-	    Err(e) => panic!(e)
-	}
+            Ok(f) => {
+                if let fudi_rs::PdMessage::Float(val) = f {
+                    println!("received {:?}", val)
+                }
+            }
+            Err(e) => panic!(e),
+        }
     }
 }
