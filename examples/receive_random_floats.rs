@@ -15,6 +15,9 @@ fn main() {
     // forever do ...
     loop {
         let msg = netreceive.receive();
-        println!("received {:?}", msg);
+        match msg {
+	    Ok(f) => println!("received {:?}", f),
+	    Err(e) => panic!(e)
+	}
     }
 }
