@@ -41,11 +41,11 @@ pub struct GenericMessage {
 /// * Float messages
 /// * Symbol messages (based on strings)
 /// * Bang messages
+/// * custom/generic message
 ///
 /// # not implemented
 /// * list
 /// * pointer
-/// * custom message
 ///
 /// # Examples
 /// Create a message to send a (floating point) number.
