@@ -264,21 +264,53 @@ mod test_parser {
         }
     }
 
-    /*
-        fn parsing_specification_example_messages() {
-            // positive test
-            let res = parse_message(b"test/blah 123.45314;\n");
-            if let Ok(parsing_result) = res {
-                let (remainder, token) = parsing_result;
-                let expected: [u8; 2] = [59, 10];
-                assert_eq!(remainder, expected);
-                let expected = [98, 97, 110, 103];
-                assert_eq!(token, expected)
-            } else {
-                assert!(false);
-            }
+/*
+    #[test]
+    fn parsing_specification_example_messages() {
+        let res = get_message(b"test/blah 123.45314;\n");
+        match res {
+            Ok(message) => assert_eq!("test/blah 123.45314;\n", message.to_text()),
+            Err(msg) => panic!(msg),
         }
-    */
+
+        let res = get_message(b"my-slider 12;\n");
+        match res {
+            Ok(message) => assert_eq!("my-slider 12;\n", message.to_text()),
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"hello this is a message;\n");
+        match res {
+            Ok(message) => assert_eq!("hello this is a message;\n", message.to_text()),
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"this message continues\nin the following\nline;\n");
+        match res {
+            Ok(message) => assert_eq!("this message continues\nin the following\nline;\n", message.to_text()),
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"you; can; send; multiple messages; in a line;\n");
+        match res {
+            Ok(message) => assert_eq!("you; can; send; multiple messages; in a line;\n", message.to_text()),
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"this\ is\ one\ whole\ atom;\n");
+        match res {
+            Ok(message) => assert_eq!("this\ is\ one\ whole\ atom;\n", message.to_text()),
+            Err(msg) => panic!(msg),
+        }
+
+        let res = get_message(b"this_atom_contains_a\\nnewline_character_in_it;\n");
+        match res {
+            Ok(message) => assert_eq!("this_atom_contains_a\\nnewline_character_in_it;\n", message.to_text()),
+            Err(msg) => panic!(msg),
+        }
+    }
+*/
+
     #[test]
     fn message_from_bang_only_payload() {
         let res = get_message(b"bang;\n");
