@@ -13,7 +13,9 @@ A message needs a trailing newline (i.e. '\n') according to the Java example in 
 * receive random floats
 ** run patch "receive_random_floats.pd"
 ** run: `cargo run --examples receive_random_floats`
-
+* receive bangs
+** run patch "recevie_bang.pd"
+** run: `cargo run --example receive_bang"
 
 # TODO
 * handling escaped whitespace in atoms

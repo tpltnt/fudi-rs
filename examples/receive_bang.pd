@@ -1,0 +1,21 @@
+#N canvas 629 89 665 391 10;
+#X obj 186 208 loadbang;
+#X msg 319 97 \; pd dsp \$1;
+#X obj 319 62 tgl 25 0 empty empty compute 27 12 0 10 -262144 -1 -1
+1 1;
+#X text 35 21 A demo patch for sending float messages to a Rust application
+;
+#X obj 186 270 netsend -u;
+#X text 368 237 connect to port 18538;
+#X obj 286 209 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X msg 186 236 connect 127.0.0.1 18538;
+#X obj 83 153 bng 45 250 50 0 empty empty click_me 50 20 0 20 -4034
+-1 -1;
+#X msg 83 231 send bang;
+#X connect 0 0 7 0;
+#X connect 2 0 1 0;
+#X connect 6 0 7 0;
+#X connect 7 0 4 0;
+#X connect 8 0 9 0;
+#X connect 9 0 4 0;
