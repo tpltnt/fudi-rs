@@ -1,7 +1,3 @@
-use rand::Rng;
-use std::thread;
-use std::time::Duration;
-
 ///! An example to receive random floats via FUDI over UDP
 ///! from a pure data patch.
 extern crate fudi_rs; // add crate to talk to pure data
@@ -16,7 +12,7 @@ fn main() {
     loop {
         let msg = netreceive.receive();
 	        match msg {
-	           Ok(f) => println!("received {:?}", f),
+	           Ok(b) => println!("received {:?}", b),
 	           Err(e) => panic!(e)
 	       }
     }
