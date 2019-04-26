@@ -18,8 +18,8 @@ A message needs a trailing newline (i.e. '\n') according to the Java example in 
 ** run: `cargo run --example receive_bang"
 
 # TODO
+* handle non-alphanumeric characters in message
 * handling escaped whitespace in atoms
-* examples (also pure data patches)
 * handle TCP
 
 # references #
