@@ -8,14 +8,14 @@ A message needs a trailing newline (i.e. '\n') according to the Java example in 
 
 # examples:
 * send random floats
-** run patch "send_random_floats.pd"
-** run: `cargo run --examples send_random_floats`
+  * run patch "send_random_floats.pd"
+  * run: `cargo run --examples send_random_floats`
 * receive random floats
-** run patch "receive_random_floats.pd"
-** run: `cargo run --examples receive_random_floats`
+  * run patch "receive_random_floats.pd"
+  * run: `cargo run --examples receive_random_floats`
 * receive bangs
-** run patch "recevie_bang.pd"
-** run: `cargo run --example receive_bang"
+  * run patch "recevie_bang.pd"
+  * run: `cargo run --example receive_bang"
 
 # TODO
 * handle non-alphanumeric characters in message
