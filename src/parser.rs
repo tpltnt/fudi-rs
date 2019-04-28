@@ -95,7 +95,7 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
             return Err("terminating semicolon is missing");
         }
 
-        // check for potential bang or float message
+        // check for potential bang, float, or list message
         if 1 == tokens.len() {
             // extract relevant data (types)
             let (msg_parts, _) = tokens[0]; // separate potental atoms from whitespace
@@ -104,6 +104,9 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
             // text -> potential bang message
             if let Some(atom) = word {
                 if atom == "bang".as_bytes() {
+                    return Ok(PdMessage::Bang);
+                }
+                if atom == "list".as_bytes() {
                     return Ok(PdMessage::Bang);
                 }
                 // generic message with only selector
