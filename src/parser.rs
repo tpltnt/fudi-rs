@@ -84,6 +84,28 @@ named!(parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>)
     )
 );
 
+// Convert bytes to float.
+fn bytes_to_float(atom: &[u8]) -> Option<f32> {
+    // digits need to be converted to integer
+    if 45 == atom[0] {
+        // negative sign/prefix
+        let word = String::from_utf8(atom[1..].to_vec()).unwrap();
+        let as_int = word.parse::<u32>();
+        if !as_int.is_err() {
+            let val = as_int.unwrap() as f32;
+            return Some(val * -1.0);
+        }
+    } else {
+        let word = String::from_utf8(atom.to_vec()).unwrap();
+        let as_int = word.parse::<u32>();
+        if !as_int.is_err() {
+            let val = as_int.unwrap() as f32;
+            return Some(val * -1.0);
+        }
+    }
+    return None;
+}
+
 /// Retrieve Pure Data message from byte payload.
 /// *note*: This implementation is incomplete and does not handle escaped whitespace inside atoms.
 pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
@@ -121,22 +143,9 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
                 return Ok(PdMessage::Float(atom));
             }
             if let Some(atom) = digits {
-                // digits need to be converted to integer
-                if 45 == atom[0] {
-                    // negative sign/prefix
-                    let word = String::from_utf8(atom[1..].to_vec()).unwrap();
-                    let as_int = word.parse::<u32>();
-                    if !as_int.is_err() {
-                        let val = as_int.unwrap() as f32;
-                        return Ok(PdMessage::Float(val * -1.0));
-                    }
-                } else {
-                    let word = String::from_utf8(atom.to_vec()).unwrap();
-                    let as_int = word.parse::<u32>();
-                    if !as_int.is_err() {
-                        let val = as_int.unwrap() as f32;
-                        return Ok(PdMessage::Float(val * -1.0));
-                    }
+                let res = bytes_to_float(atom);
+                if let Some(val) = res {
+                    return Ok(PdMessage::Float(val));
                 }
             }
         }
@@ -162,22 +171,9 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
                         return Ok(PdMessage::Float(atom));
                     }
                     if let Some(atom) = digits {
-                        // digits need to be converted to integer
-                        if 45 == atom[0] {
-                            // negative sign/prefix
-                            let word = String::from_utf8(atom[1..].to_vec()).unwrap();
-                            let as_int = word.parse::<u32>();
-                            if !as_int.is_err() {
-                                let val = as_int.unwrap() as f32;
-                                return Ok(PdMessage::Float(val * -1.0));
-                            }
-                        } else {
-                            let word = String::from_utf8(atom.to_vec()).unwrap();
-                            let as_int = word.parse::<u32>();
-                            if !as_int.is_err() {
-                                let val = as_int.unwrap() as f32;
-                                return Ok(PdMessage::Float(val * -1.0));
-                            }
+                        let res = bytes_to_float(atom);
+                        if let Some(val) = res {
+                            return Ok(PdMessage::Float(val));
                         }
                     }
                 }
