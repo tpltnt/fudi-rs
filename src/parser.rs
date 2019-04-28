@@ -141,7 +141,7 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
             }
         }
 
-        // check for symbol and float messages
+        // check for symbol, float, or list messages
         if 2 == tokens.len() {
             // extract relevant data (types)
             let (msg_parts, _) = tokens[0]; // separate potental selector from whitespace
@@ -149,6 +149,9 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
 
             // text -> selector
             if let Some(atom) = word {
+                // handle list message with just one element
+                if atom == "list".as_bytes() {}
+
                 // handle float message
                 if atom == "float".as_bytes() {
                     let (msg_parts, _) = tokens[1];
@@ -416,9 +419,27 @@ mod test_parser {
             Err(msg) => panic!(msg),
         }
 
-        // one-element lists
+        // --- one-element lists ---
         // one word -> conversion to symbol-message
+        let res = get_message(b"list foo;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Symbol(_) => assert_eq!("symbol foo;\n", message.to_text()),
+                _ => panic!("symbol message expected, different type detected"),
+            },
+            Err(msg) => panic!(msg),
+        }
+
         // one number -> conversion to float message
+        let res = get_message(b"list 74;\n");
+        match res {
+            Ok(message) => match message {
+                PdMessage::Float(_) => assert_eq!("float 74;\n", message.to_text()),
+                _ => panic!("float message expected, different type detected"),
+            },
+            Err(msg) => panic!(msg),
+        }
+
         // one pointer -> conversion to pointer
         // implied list-selector -> multi-element message that starts with a number is a list-message, too. (Cf. implied selector in float-messages)
     }
