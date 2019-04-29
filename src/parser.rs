@@ -159,7 +159,27 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
             // text -> selector
             if let Some(atom) = word {
                 // handle list message with just one element
-                if atom == "list".as_bytes() {}
+                if atom == "list".as_bytes() {
+                    let (msg_parts, _) = tokens[1];
+                    let (number, word) = msg_parts;
+
+                    // handle number payload as float
+                    let (f, digits) = number; // separate float from integer
+                    if let Some(atom) = f {
+                        return Ok(PdMessage::Float(atom));
+                    }
+                    if let Some(atom) = digits {
+                        let res = bytes_to_float(atom);
+                        if let Some(val) = res {
+                            return Ok(PdMessage::Float(val));
+                        }
+                    }
+
+                    // handle text as symbol
+                    if let Some(atom) = word {
+                        return Ok(PdMessage::Symbol(String::from_utf8(atom.to_vec()).unwrap()));
+                    }
+                }
 
                 // handle float message
                 if atom == "float".as_bytes() {
