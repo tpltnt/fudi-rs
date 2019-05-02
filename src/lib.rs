@@ -35,6 +35,13 @@ pub struct GenericMessage {
     atoms: Vec<String>,
 }
 
+/// An implementation of the (generic) atom data type.
+#[derive(Debug)]
+pub struct Atom {
+    number: Option<f32>,
+    word: Option<String>,
+}
+
 /// An incomplete implementation of Pure Data message types.
 ///
 /// # implemented
