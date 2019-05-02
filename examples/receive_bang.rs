@@ -1,4 +1,4 @@
-///! An example to receive random floats via FUDI over UDP
+///! An example to receive bangs via FUDI over UDP
 ///! from a pure data patch.
 extern crate fudi_rs; // add crate to talk to pure data
 
