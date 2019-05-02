@@ -68,6 +68,7 @@ pub enum PdMessage {
     Float(f32),
     Symbol(String),
     Bang,
+    List(Vec<Atom>),
     Generic(GenericMessage),
 }
 
@@ -81,6 +82,10 @@ impl PdMessage {
             PdMessage::Float(f) => payload = format!("float {}", f),
             PdMessage::Symbol(word) => payload = format!("symbol {}", word),
             PdMessage::Bang => payload = String::from("bang"),
+            PdMessage::List(items) => {
+                payload = String::from("list");
+                for atom in items.iter() {}
+            }
             PdMessage::Generic(msg) => {
                 payload = msg.selector.clone();
                 for atom in msg.atoms.iter() {
