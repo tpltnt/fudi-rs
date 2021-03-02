@@ -6,4 +6,4 @@ edition = "2018"
 
 [dependencies]
 nom = "4.2.3"
-rand = "0.6"
+rand = "0.8"

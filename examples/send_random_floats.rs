@@ -14,7 +14,7 @@ fn main() {
 
     // forever do ...
     loop {
-        let f = rand::thread_rng().gen_range(-139.8, 694.5); // generate random number between -139.8 and 694.5
+        let f = rand::thread_rng().gen_range(-139.8..694.5); // generate random number between -139.8 and 694.5
         let msg = fudi_rs::PdMessage::Float(f); // create a float message
         println!("sending {:?}", msg);
         netsend.send(&msg).expect("sending message failed"); // actually send the float message
