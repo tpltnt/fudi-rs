@@ -13,7 +13,7 @@ fn main() {
         let msg = netreceive.receive();
         match msg {
             Ok(b) => println!("received {:?}", b),
-            Err(e) => panic!(e),
+            Err(e) => panic!("{}", e),
         }
     }
 }

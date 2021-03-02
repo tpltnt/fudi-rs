@@ -293,43 +293,43 @@ mod test_parser {
             let res = get_message(b"test/blah 123.45314;\n");
             match res {
                 Ok(message) => assert_eq!("test/blah 123.45314;\n", message.to_text()),
-                Err(msg) => panic!(msg),
+                Err(msg) => panic!("{}", msg),
             }
 
             let res = get_message(b"my-slider 12;\n");
             match res {
                 Ok(message) => assert_eq!("my-slider 12;\n", message.to_text()),
-                Err(msg) => panic!(msg),
+                Err(msg) => panic!("{}", msg),
             }
 
             let res = get_message(b"hello this is a message;\n");
             match res {
                 Ok(message) => assert_eq!("hello this is a message;\n", message.to_text()),
-                Err(msg) => panic!(msg),
+                Err(msg) => panic!("{}", msg),
             }
 
             let res = get_message(b"this message continues\nin the following\nline;\n");
             match res {
                 Ok(message) => assert_eq!("this message continues\nin the following\nline;\n", message.to_text()),
-                Err(msg) => panic!(msg),
+                Err(msg) => panic!("{}", msg),
             }
 
             let res = get_message(b"you; can; send; multiple messages; in a line;\n");
             match res {
                 Ok(message) => assert_eq!("you; can; send; multiple messages; in a line;\n", message.to_text()),
-                Err(msg) => panic!(msg),
+                Err(msg) => panic!("{}", msg),
             }
 
             let res = get_message(b"this\ is\ one\ whole\ atom;\n");
             match res {
                 Ok(message) => assert_eq!("this\ is\ one\ whole\ atom;\n", message.to_text()),
-                Err(msg) => panic!(msg),
+                Err(msg) => panic!("{}", msg),
             }
 
             let res = get_message(b"this_atom_contains_a\\nnewline_character_in_it;\n");
             match res {
                 Ok(message) => assert_eq!("this_atom_contains_a\\nnewline_character_in_it;\n", message.to_text()),
-                Err(msg) => panic!(msg),
+                Err(msg) => panic!("{}", msg),
             }
         }
     */
@@ -339,7 +339,7 @@ mod test_parser {
         let res = get_message(b"bang;\n");
         match res {
             Ok(message) => assert_eq!("bang;\n", message.to_text()),
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
     }
 
@@ -348,7 +348,7 @@ mod test_parser {
         let res = get_message(b"selector;\n");
         match res {
             Ok(message) => assert_eq!("selector;\n", message.to_text()),
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         let res = get_message(b"only alpha msg;\n");
@@ -357,7 +357,7 @@ mod test_parser {
                 PdMessage::Generic(_) => assert_eq!("only alpha msg;\n", message.to_text()),
                 _ => panic!("unexpected message type"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
     }
 
@@ -370,7 +370,7 @@ mod test_parser {
                 PdMessage::Float(_) => assert_eq!("float 39;\n", message.to_text()),
                 _ => panic!("float message expected, different type detected"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         let res = get_message(b"-27.2727;\n");
@@ -379,7 +379,7 @@ mod test_parser {
                 PdMessage::Float(_) => assert_eq!("float -27.2727;\n", message.to_text()),
                 _ => panic!("float message expected, different type detected"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         let res = get_message(b"float 3;\n");
@@ -388,7 +388,7 @@ mod test_parser {
                 PdMessage::Float(_) => assert_eq!("float 3;\n", message.to_text()),
                 _ => panic!("unexpected message type"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         let res = get_message(b"float -5.7;\n");
@@ -397,7 +397,7 @@ mod test_parser {
                 PdMessage::Float(_) => assert_eq!("float -5.7;\n", message.to_text()),
                 _ => panic!("unexpected message type"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
     }
 
@@ -409,7 +409,7 @@ mod test_parser {
                 PdMessage::Symbol(_) => assert_eq!("symbol foo;\n", message.to_text()),
                 _ => panic!("symbol message expected, different type detected"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         let res = get_message(b"la la;\n");
@@ -420,7 +420,7 @@ mod test_parser {
                 }
                 _ => (),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
     }
 
@@ -433,7 +433,7 @@ mod test_parser {
                 PdMessage::Bang => assert_eq!("bang;\n", message.to_text()),
                 _ => panic!("bang message expected, different type detected"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         // --- one-element lists ---
@@ -444,7 +444,7 @@ mod test_parser {
                 PdMessage::Symbol(_) => assert_eq!("symbol foo;\n", message.to_text()),
                 _ => panic!("symbol message expected, different type detected"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         // one number -> conversion to float message
@@ -454,7 +454,7 @@ mod test_parser {
                 PdMessage::Float(_) => assert_eq!("float 74;\n", message.to_text()),
                 _ => panic!("float message expected, different type detected"),
             },
-            Err(msg) => panic!(msg),
+            Err(msg) => panic!("{}", msg),
         }
 
         // one pointer -> conversion to pointer

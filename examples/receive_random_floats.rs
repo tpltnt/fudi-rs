@@ -17,7 +17,7 @@ fn main() {
                     println!("received {:?}", val)
                 }
             }
-            Err(e) => panic!(e),
+            Err(e) => panic!("{}", e),
         }
     }
 }
