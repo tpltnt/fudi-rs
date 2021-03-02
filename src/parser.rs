@@ -46,7 +46,7 @@ mod test_supplements {
     fn test_non_whitespace() {
         // generate random ASCII character
         let mut rng = rand::thread_rng();
-        let mut t: u8 = rng.gen_range(0, 128); // ASCII is 7 bit
+        let mut t: u8 = rng.gen_range(0..128); // ASCII is 7 bit
 
         // make sure it is not 9,10, or 32
         while (t == 9) || (t == 10) || (t == 32) {
