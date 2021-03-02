@@ -10,7 +10,7 @@ repository = "https://github.com/tpltnt/fudi-rs"
 documentation = "https://docs.rs/fudi-rs/"
 keywords = ["networking", "sound", "music", "puredata"]
 readme = "README.md"
-categories = ["api-binding", "network-programming", "parsing-tools"]
+categories = ["api-bindings", "network-programming", "parsing"]
 
 [dependencies]
 nom = "6.1.2"
