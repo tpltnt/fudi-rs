@@ -128,7 +128,6 @@ mod test_pdmessage {
         });
         assert_eq!(String::from("selector one two 17.9;\n"), msg.to_text());
     }
-
 }
 
 /// Encapsulate sending Pure Date messages via FUDI over UDP.
