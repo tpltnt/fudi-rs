@@ -94,7 +94,7 @@ impl PdMessage {
             }
         }
         payload = format!("{};\n", payload); // newline not in spec, but in vanilla pd
-        return payload;
+        payload
     }
 }
 

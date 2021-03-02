@@ -104,7 +104,7 @@ fn bytes_to_float(atom: &[u8]) -> Option<f32> {
             return Some(val * -1.0);
         }
     }
-    return None;
+    None
 }
 
 /// Retrieve Pure Data message from byte payload.
@@ -229,7 +229,7 @@ pub fn get_message(payload: &[u8]) -> Result<PdMessage, &str> {
             atoms: atoms[1..].to_vec(),
         }));
     }
-    return Err("could not parse payload");
+    Err("could not parse payload")
 }
 
 #[cfg(test)]
