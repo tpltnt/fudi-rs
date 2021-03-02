@@ -1,7 +1,8 @@
 //! Parse Pure Data Messages using nom.
 
 use crate::{GenericMessage, PdMessage};
-use nom::{alphanumeric, digit, float};
+use nom::character::complete::{alphanumeric1, digit1};
+use nom::number::complete::float;
 
 extern crate rand;
 use rand::Rng;
@@ -66,7 +67,7 @@ mod test_supplements {
 named!(parse_message<&[u8], (std::vec::Vec<(((std::option::Option<f32>, std::option::Option<&[u8]>), std::option::Option<&[u8]>), &[u8])>, char)>,
     many_till!(
         pair!(
-	    parse_atom,
+        parse_atom,
             take_till!(is_not_whitespace)
         ),
         char!(';')
@@ -78,9 +79,9 @@ named!(parse_atom<&[u8], ((std::option::Option<f32>, std::option::Option<&[u8]>)
     pair!(
         pair!(
             opt!(float),
-            opt!(digit)
-	),
-        opt!(alphanumeric)
+            opt!(digit1)
+    ),
+        opt!(alphanumeric1)
     )
 );
 
