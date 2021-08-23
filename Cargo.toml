@@ -13,5 +13,5 @@ readme = "README.md"
 categories = ["api-bindings", "network-programming", "parsing"]
 
 [dependencies]
-nom = "6.1.2"
+nom = "7.0.0"
 rand = "0.8"
