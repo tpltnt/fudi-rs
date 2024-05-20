@@ -7,6 +7,8 @@ An implementation of the Fast Universal Digital Interface networking protocol. T
 The specification implies ASCII encoding for the messages.
 A message needs a trailing newline (i.e. '\n') according to the Java example in the [old wiki page](https://web.archive.org/web/20120304071510/http://wiki.puredata.info/en/FUDI). This is not explicitly mentioned in the FUDI specification.
 
+Use [libpd-rs](https://github.com/alisomay/libpd-rs) if you want to interface with libpd.
+
 # examples:
 * send random floats
   * run patch "send_random_floats.pd"
